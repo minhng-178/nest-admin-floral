@@ -14,10 +14,18 @@ import {
 export class CategoriesService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
-    return await this.prisma.category.create({
+  async create(
+    createCategoryDto: CreateCategoryDto,
+  ): Promise<BaseResponse<Category>> {
+    const category = await this.prisma.category.create({
       data: createCategoryDto,
     });
+    return {
+      data: category,
+      message: 'Category created successfully',
+      success: true,
+      status: 'OK',
+    };
   }
 
   async findAll(
@@ -56,26 +64,43 @@ export class CategoriesService {
     );
   }
 
-  async findOne(id: number): Promise<Category> {
-    return await this.prisma.category.findUnique({
+  async findOne(id: string): Promise<BaseResponse<Category>> {
+    const category = await this.prisma.category.findUnique({
       where: { id },
     });
+    return {
+      data: category,
+      message: 'Category fetched successfully',
+      success: true,
+      status: 'OK',
+    };
   }
 
   async update(
-    id: number,
+    id: string,
     updateCategoryDto: UpdateCategoryDto,
-  ): Promise<Category> {
-    return await this.prisma.category.update({
+  ): Promise<BaseResponse<Category>> {
+    const category = await this.prisma.category.update({
       where: { id },
       data: updateCategoryDto,
     });
+    return {
+      data: category,
+      message: 'Category updated successfully',
+      success: true,
+      status: 'OK',
+    };
   }
 
-  async remove(id: number): Promise<Category> {
-    return await this.prisma.category.update({
+  async remove(id: string): Promise<BaseResponse<Category>> {
+    const category = await this.prisma.category.delete({
       where: { id },
-      data: { status: false },
     });
+    return {
+      data: category,
+      message: 'Category deleted successfully',
+      success: true,
+      status: 'OK',
+    };
   }
 }

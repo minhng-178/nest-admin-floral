@@ -15,6 +15,5 @@ export class CreateCategoryDto {
   description: string;
 
   @IsBoolean()
-  @ApiProperty({ required: false, default: true })
   status?: boolean = true;
 }

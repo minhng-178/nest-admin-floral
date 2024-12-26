@@ -3,23 +3,17 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  const category1 = await prisma.category.upsert({
-    where: { name: 'Orchids' },
-    update: {},
-    create: {
-      name: 'Orchids',
-      description:
-        'Orchids are a diverse and widespread family of flowering plants, with blooms that are often colourful and fragrant.',
+  const category1 = await prisma.category.create({
+    data: {
+      name: 'Tulip',
+      description: 'Tulip is a beautiful flower',
     },
   });
 
-  const category2 = await prisma.category.upsert({
-    where: { name: 'Succulents' },
-    update: {},
-    create: {
-      name: 'Succulents',
-      description:
-        'Succulents are plants that store water in their leaves, stems, and roots.',
+  const category2 = await prisma.category.create({
+    data: {
+      name: 'Rose',
+      description: 'Rose is a beautiful flower',
     },
   });
 

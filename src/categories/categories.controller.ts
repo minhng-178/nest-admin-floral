@@ -16,7 +16,7 @@ import {
   BaseResponse,
   PagingResponse,
 } from 'src/params/dto/params-response.dto';
-import { Category } from '@prisma/client';
+import { Category } from './entities/category.entity';
 import { ParamsRequest } from 'src/params/dto/params-request.dto';
 
 @Controller('categories')
@@ -24,8 +24,22 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoriesService.create(createCategoryDto);
+  @ApiOperation({ summary: 'Create a new category' })
+  @ApiResponse({
+    status: 201,
+    description: 'The category has been successfully created.',
+    type: BaseResponse<Category>,
+  })
+  async create(
+    @Body() createCategoryDto: CreateCategoryDto,
+  ): Promise<BaseResponse<Category>> {
+    const category = await this.categoriesService.create(createCategoryDto);
+    return {
+      message: 'Category created successfully',
+      success: true,
+      status: 'OK',
+      data: category,
+    };
   }
 
   @Get()
@@ -42,20 +56,38 @@ export class CategoriesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoriesService.findOne(+id);
+  @ApiOperation({ summary: 'Get a category by ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Category fetched successfully',
+    type: BaseResponse<Category>,
+  })
+  findOne(@Param('id') id: string): Promise<BaseResponse<Category>> {
+    return this.categoriesService.findOne(id);
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: 'Update a category by ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Category updated successfully',
+    type: BaseResponse<Category>,
+  })
   update(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
-  ) {
-    return this.categoriesService.update(+id, updateCategoryDto);
+  ): Promise<BaseResponse<Category>> {
+    return this.categoriesService.update(id, updateCategoryDto);
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete a category by ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Category removed successfully',
+    type: BaseResponse<Category>,
+  })
   remove(@Param('id') id: string) {
-    return this.categoriesService.remove(+id);
+    return this.categoriesService.remove(id);
   }
 }
