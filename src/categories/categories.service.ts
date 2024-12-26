@@ -23,24 +23,28 @@ export class CategoriesService {
   async findAll(
     params: ParamsRequest,
   ): Promise<BaseResponse<PagingResponse<Category>>> {
-    const { search = '', page = 1, pageSize = 10 } = params;
-    const skip = (page - 1) * pageSize;
-    const take = pageSize;
+    const { page, pageSize, search } = params;
 
-    // const where =
-    //   search !== ''
-    //     ? {
-    //         status: true,
-    //         name: {
-    //           contains: search,
-    //           mode: Prisma.QueryMode.insensitive,
-    //         },
-    //       }
-    //     : {};
+    const take = pageSize || 10;
+    const skip = pageSize * (page - 1) || 0;
+    const where =
+      search !== ''
+        ? {
+            status: true,
+            name: {
+              contains: search,
+              mode: Prisma.QueryMode.insensitive,
+            },
+          }
+        : {};
 
     const [items, totalItems] = await Promise.all([
-      this.prisma.category.findMany({ skip, take }),
-      this.prisma.category.count(),
+      this.prisma.category.findMany({
+        where,
+        take,
+        skip,
+      }),
+      this.prisma.category.count({ where }),
     ]);
 
     return paginate(

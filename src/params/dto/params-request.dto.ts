@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsPositive, IsString, Min } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+  Min,
+} from 'class-validator';
 
 export class ParamsRequest {
   @ApiProperty({ required: false, description: 'Search keyword' })
@@ -8,6 +15,8 @@ export class ParamsRequest {
   search?: string;
 
   @ApiProperty({ required: false, default: 1, description: 'Page number' })
+  @Type(() => Number)
+  @IsNumber()
   @IsOptional()
   @IsPositive()
   @Min(1)
@@ -18,6 +27,8 @@ export class ParamsRequest {
     default: 10,
     description: 'Number of items per page',
   })
+  @Type(() => Number)
+  @IsNumber()
   @IsOptional()
   @IsPositive()
   @Min(1)

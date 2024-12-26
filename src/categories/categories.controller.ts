@@ -35,8 +35,10 @@ export class CategoriesController {
     description: 'List of categories with pagination',
     type: BaseResponse<PagingResponse<Category>>,
   })
-  async findAll(@Query() query: ParamsRequest) {
-    return this.categoriesService.findAll(query);
+  async findAll(
+    @Query() params: ParamsRequest,
+  ): Promise<BaseResponse<PagingResponse<Category>>> {
+    return this.categoriesService.findAll(params);
   }
 
   @Get(':id')
