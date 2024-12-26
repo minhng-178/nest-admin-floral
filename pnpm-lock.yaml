@@ -35,6 +35,9 @@ importers:
       cloudinary:
         specifier: ^2.5.1
         version: 2.5.1
+      nest-admin-floral:
+        specifier: 'link:'
+        version: 'link:'
       reflect-metadata:
         specifier: ^0.2.0
         version: 0.2.2
