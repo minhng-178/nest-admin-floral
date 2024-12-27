@@ -4,11 +4,13 @@ import {
   ParseFilePipeBuilder,
   Post,
   UploadedFile,
+  UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
 import { CloudinaryService } from './cloudinary.service';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { CloudinaryResponse } from './cloudinary-response';
 
 @Controller('image')
 export class CloudinaryController {
@@ -36,7 +38,7 @@ export class CloudinaryController {
         .build(),
     )
     file: Express.Multer.File,
-  ) {
+  ): Promise<CloudinaryResponse> {
     return this.cloudinaryService.uploadFile(file);
   }
 
@@ -56,16 +58,16 @@ export class CloudinaryController {
       },
     },
   })
-  @UseInterceptors(FileInterceptor('files'))
+  @UseInterceptors(FilesInterceptor('files'))
   multipleUpload(
-    @UploadedFile(
+    @UploadedFiles(
       new ParseFilePipeBuilder()
         .addMaxSizeValidator({ maxSize: 1024 * 1024 * 2 })
         .addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
         .build(),
     )
-    files: Express.Multer.File[],
-  ) {
+    files: Array<Express.Multer.File>,
+  ): Promise<Array<CloudinaryResponse>> {
     return this.cloudinaryService.multipleUpload(files);
   }
 }

@@ -1,7 +1,7 @@
 // cloudinary.service.ts
 
 import * as streamifier from 'streamifier';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryResponse } from './cloudinary-response';
 

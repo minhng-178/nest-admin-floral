@@ -62,7 +62,7 @@ export class CategoriesController {
     description: 'Category fetched successfully',
     type: BaseResponse<Category>,
   })
-  findOne(@Param('id') id: string): Promise<BaseResponse<Category>> {
+  async findOne(@Param('id') id: string): Promise<BaseResponse<Category>> {
     return this.categoriesService.findOne(id);
   }
 
@@ -73,7 +73,7 @@ export class CategoriesController {
     description: 'Category updated successfully',
     type: BaseResponse<Category>,
   })
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
   ): Promise<BaseResponse<Category>> {
@@ -87,7 +87,7 @@ export class CategoriesController {
     description: 'Category removed successfully',
     type: BaseResponse<Category>,
   })
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.categoriesService.remove(id);
   }
 }

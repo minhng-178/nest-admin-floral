@@ -61,7 +61,7 @@ export class FlowersController {
     description: 'The flower has been successfully retrieved.',
     type: BaseResponse<Flower>,
   })
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     return this.flowersService.findOne(id);
   }
 
@@ -72,7 +72,10 @@ export class FlowersController {
     description: 'The flower has been successfully updated.',
     type: BaseResponse<Flower>,
   })
-  update(@Param('id') id: string, @Body() updateFlowerDto: UpdateFlowerDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateFlowerDto: UpdateFlowerDto,
+  ) {
     return this.flowersService.update(id, updateFlowerDto);
   }
 
@@ -83,7 +86,7 @@ export class FlowersController {
     description: 'The flower has been successfully deleted.',
     type: BaseResponse<Flower>,
   })
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.flowersService.remove(id);
   }
 }
