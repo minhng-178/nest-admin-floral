@@ -14,7 +14,7 @@ import { paginate } from 'src/params/helpers/params.helper';
 export class FlowersService {
   constructor(private prisma: PrismaService) {}
   async create(createFlowerDto: CreateFlowerDto): Promise<Flower> {
-    const { categoryId, ...flowerData } = createFlowerDto;
+    const { categoryId, images, ...flowerData } = createFlowerDto;
 
     const flower = await this.prisma.flower.create({
       data: {
@@ -22,17 +22,21 @@ export class FlowersService {
         category: {
           connect: { id: categoryId },
         },
-        images: {
-          create: flowerData.images.map((image) => ({
-            type: image.type,
-            id: image.id,
-            url: image.url,
-            altText: image.altText,
-            status: image.status,
-          })),
-        },
       },
     });
+
+    if (images && images.length > 0) {
+      await this.prisma.image.createMany({
+        data: images.map((image) => ({
+          flowerId: flower.id,
+          type: image.type,
+          id: image.id,
+          url: image.url,
+          altText: image?.altText || '',
+          status: image.status,
+        })),
+      });
+    }
 
     return flower;
   }

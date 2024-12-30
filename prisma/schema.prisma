@@ -68,10 +68,10 @@ model Image {
   id       String         @id @default(uuid())
   url      String
   type     AttachmentType @default(IMAGE)
-  altText  String?
+  altText  String?        @default("")
   status   Boolean        @default(true)
-  flowerId String
-  flower   Flower         @relation(fields: [flowerId], references: [id])
+  flowerId String?
+  flower   Flower?        @relation(fields: [flowerId], references: [id])
 }
 
 enum Role {

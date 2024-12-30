@@ -62,7 +62,7 @@ export class CloudinaryController {
   multipleUpload(
     @UploadedFiles(
       new ParseFilePipeBuilder()
-        .addMaxSizeValidator({ maxSize: 1024 * 1024 * 2 })
+        .addMaxSizeValidator({ maxSize: 1024 * 1024 * 4 })
         .addFileTypeValidator({ fileType: '.(png|jpeg|jpg)' })
         .build(),
     )
