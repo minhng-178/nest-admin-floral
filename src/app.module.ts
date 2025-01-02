@@ -9,6 +9,8 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { ConfigModule } from '@nestjs/config';
 import { validate } from './env/env.validation';
 import { LoggerMiddleware } from 'logger.middleware';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { LoggerMiddleware } from 'logger.middleware';
     FlowersModule,
     ParamsModule,
     CloudinaryModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
