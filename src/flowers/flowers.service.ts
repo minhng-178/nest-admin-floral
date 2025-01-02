@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateFlowerDto } from './dto/create-flower.dto';
 import { UpdateFlowerDto } from './dto/update-flower.dto';
 import { Flower, Prisma } from '@prisma/client';
@@ -16,6 +16,14 @@ export class FlowersService {
   async create(createFlowerDto: CreateFlowerDto): Promise<Flower> {
     const { categoryId, images, ...flowerData } = createFlowerDto;
 
+    if (!images || images.length === 0) {
+      throw new HttpException('Images are required', HttpStatus.BAD_REQUEST);
+    }
+
+    if (!categoryId) {
+      throw new HttpException('Category is required', HttpStatus.BAD_REQUEST);
+    }
+
     const flower = await this.prisma.flower.create({
       data: {
         ...flowerData,
@@ -25,18 +33,20 @@ export class FlowersService {
       },
     });
 
-    if (images && images.length > 0) {
-      await this.prisma.image.createMany({
-        data: images.map((image) => ({
-          flowerId: flower.id,
-          type: image.type,
-          id: image.id,
-          url: image.url,
-          altText: image?.altText || '',
-          status: image.status,
-        })),
-      });
+    if (!flower) {
+      throw new HttpException('Wrong Category Id', HttpStatus.NOT_FOUND);
     }
+
+    await this.prisma.image.createMany({
+      data: images.map((image) => ({
+        flowerId: flower.id,
+        type: image.type,
+        id: image.id,
+        url: image.url,
+        altText: image?.altText || '',
+        status: image.status,
+      })),
+    });
 
     return flower;
   }
@@ -45,6 +55,13 @@ export class FlowersService {
     params: ParamsRequest,
   ): Promise<BaseResponse<PagingResponse<Flower>>> {
     const { page, pageSize, search } = params;
+
+    if (!page || !pageSize || page < 1 || pageSize < 1) {
+      throw new HttpException(
+        'Page and pageSize must be greater than 0',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
     const take = pageSize || 10;
     const skip = pageSize * (page - 1) || 0;
@@ -72,9 +89,18 @@ export class FlowersService {
   }
 
   async findOne(id: string): Promise<BaseResponse<Flower>> {
+    if (!id) {
+      throw new HttpException('Id is required', HttpStatus.BAD_REQUEST);
+    }
+
     const flower = await this.prisma.flower.findUnique({
       where: { id },
     });
+
+    if (!flower) {
+      throw new HttpException('Flower not found', HttpStatus.NOT_FOUND);
+    }
+
     return {
       data: flower,
       message: 'Flower found',
@@ -87,7 +113,15 @@ export class FlowersService {
     id: string,
     updateFlowerDto: UpdateFlowerDto,
   ): Promise<BaseResponse<Flower>> {
-    const { categoryId, ...flowerData } = updateFlowerDto;
+    const { categoryId, images, ...flowerData } = updateFlowerDto;
+
+    if (!images || images.length === 0) {
+      throw new HttpException('Images are required', HttpStatus.BAD_REQUEST);
+    }
+
+    if (!categoryId) {
+      throw new HttpException('Category is required', HttpStatus.BAD_REQUEST);
+    }
 
     const flower = await this.prisma.flower.update({
       where: { id },
@@ -97,7 +131,7 @@ export class FlowersService {
           connect: { id: categoryId },
         },
         images: {
-          create: flowerData.images.map((image) => ({
+          create: images.map((image) => ({
             type: image.type,
             id: image.id,
             url: image.url,
@@ -117,6 +151,10 @@ export class FlowersService {
   }
 
   async remove(id: string): Promise<BaseResponse<Flower>> {
+    if (!id) {
+      throw new HttpException('Id is required', HttpStatus.BAD_REQUEST);
+    }
+
     const flower = await this.prisma.flower.delete({
       where: { id },
     });
